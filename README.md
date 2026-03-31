@@ -340,3 +340,31 @@ This document serves as a **public disclosure of system design and implementatio
 * Serverless multi-context consensus models
 
 ---
+
+## 14. P2P Extension (v1.1 Update)
+
+### 14.1 Overview
+
+The Deterministic Local DAG State System (DLDSS) now supports **peer-to-peer synchronization across devices**, while retaining full backward compatibility with the existing DAG and intra-device BroadcastChannel mechanisms. This extension introduces a **fourth transport** alongside localStorage and BroadcastChannel, enabling cross-device state replication **without centralized servers**.
+
+### 14.2 Key Architectural Decisions
+
+- **Single Unified Write Path:** `dispatchEvent()` now appends events to the DAG, persists to localStorage, broadcasts to other tabs, and sends to connected peers via P2P (`p2pBroadcast()`). One call ensures **deterministic propagation across all transports**.  
+- **Single Unified Read Path:** `receiveEvent()` handles all incoming events, whether from other tabs (BroadcastChannel) or remote peers (WebRTC DataChannel). Events are **deduplicated, appended, persisted, and relayed automatically**.  
+- **Deduplication:** Uses a pre-seeded `seen` Set from the loaded DAG to prevent duplicates when receiving full DAG syncs from peers.  
+- **Manual, Serverless Signaling:** Peer connections use a three-step manual flow: generate offer → send out-of-band → paste answer back. No TURN server is required on LAN; optional STUN servers handle NAT traversal on the open internet.  
+- **Event Origin Transparency:** Each message includes a small badge indicating its origin: local, BroadcastChannel (`bc`), or P2P. This aids debugging and auditing.  
+- **Deterministic Ordering:** After a full DAG sync from a peer, `dag.sort()` restores ordering by `[timestamp, authorId]` as defined in the original specification.
+
+### 14.3 Benefits
+
+- Extends DLDSS from **single-device, multi-tab synchronization** to **multi-device peer collaboration**.  
+- Maintains **full determinism, conflict-free state, and reproducibility** across all peers.  
+- Fully **serverless and decentralized**, enabling offline-first applications.  
+- Supports **auditable, transparent event origins** for each cross-device message.
+
+### 14.4 Implementation Notes
+
+- P2P layer is **additive**, leaving all existing code paths and DAG logic unchanged.  
+- Manual signaling ensures **no dependency on external servers**, protecting privacy and sovereignty.  
+- Can be integrated with **higher-level networking protocols or encrypted overlays** for future extensions (e.g., IPFS, FHE-secured replication).
