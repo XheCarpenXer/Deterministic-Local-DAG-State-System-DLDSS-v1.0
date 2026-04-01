@@ -75,7 +75,9 @@ The system operates entirely offline and does not require TCP/IP, WebRTC, or ext
 A linearized DAG (for MVP) representing all state transitions:
 
 ```
+
 event_1 → event_2 → event_3 → ...
+
 ```
 
 Each event contains:
@@ -111,19 +113,21 @@ Derives view state by replaying the DAG.
 ### **4.1 Event Structure**
 
 ```
+
 {
-  type: string,
-  payload: object,
-  author: string,
-  timestamp: number
+type: string,
+payload: object,
+author: string,
+timestamp: number
 }
+
 ```
 
 ### **4.2 DAG Properties**
 
-* Directed: events reference causal order implicitly
-* Acyclic: no event can depend on a future event
-* Append-only: ensures immutability and replayability
+* Directed: events reference causal order implicitly  
+* Acyclic: no event can depend on a future event  
+* Append-only: ensures immutability and replayability  
 
 ---
 
@@ -131,12 +135,12 @@ Derives view state by replaying the DAG.
 
 ### **5.1 Event Lifecycle**
 
-1. User action occurs
-2. Event is created
-3. Event is appended to DAG
-4. DAG is persisted locally
-5. Event is broadcast to other contexts
-6. Receiving contexts append and re-render
+1. User action occurs  
+2. Event is created  
+3. Event is appended to DAG  
+4. DAG is persisted locally  
+5. Event is broadcast to other contexts  
+6. Receiving contexts append and re-render  
 
 ---
 
@@ -145,14 +149,16 @@ Derives view state by replaying the DAG.
 State is reconstructed via:
 
 ```
+
 state = reduce(events)
+
 ```
 
 Because:
 
-* Events are immutable
-* Order is preserved
-* No side effects exist outside event application
+* Events are immutable  
+* Order is preserved  
+* No side effects exist outside event application  
 
 All clients converge to identical state.
 
@@ -165,20 +171,22 @@ All clients converge to identical state.
 Each client subscribes to a shared channel:
 
 ```
+
 channel = new BroadcastChannel('dag-sync')
+
 ```
 
 #### **On Event Creation**
 
-* Append locally
-* Persist
-* Broadcast event
+* Append locally  
+* Persist  
+* Broadcast event  
 
 #### **On Event Reception**
 
-* Append received event
-* Persist updated DAG
-* Trigger UI update
+* Append received event  
+* Persist updated DAG  
+* Trigger UI update  
 
 ---
 
@@ -186,8 +194,8 @@ channel = new BroadcastChannel('dag-sync')
 
 Given:
 
-* Reliable local broadcast delivery
-* Deterministic append logic
+* Reliable local broadcast delivery  
+* Deterministic append logic  
 
 Then:
 
@@ -200,19 +208,21 @@ Then:
 ### **7.1 DAG Core**
 
 ```
+
 class DAG {
-  constructor() {
-    this.events = [];
-  }
-
-  append(event) {
-    this.events.push(event);
-  }
-
-  getAll() {
-    return this.events;
-  }
+constructor() {
+this.events = [];
 }
+
+append(event) {
+this.events.push(event);
+}
+
+getAll() {
+return this.events;
+}
+}
+
 ```
 
 ---
@@ -220,39 +230,41 @@ class DAG {
 ### **7.2 Persistence + Sync**
 
 ```
+
 const channel = new BroadcastChannel('dag-sync');
 
 function addEvent(event) {
-  dag.append(event);
-  localStorage.setItem('dag', JSON.stringify(dag.getAll()));
-  channel.postMessage(event);
+dag.append(event);
+localStorage.setItem('dag', JSON.stringify(dag.getAll()));
+channel.postMessage(event);
 }
 
 channel.onmessage = (msg) => {
-  dag.append(msg.data);
-  localStorage.setItem('dag', JSON.stringify(dag.getAll()));
-  notifyUpdate();
+dag.append(msg.data);
+localStorage.setItem('dag', JSON.stringify(dag.getAll()));
+notifyUpdate();
 };
+
 ```
 
 ---
 
 ### **7.3 UI Model**
 
-* Reads full DAG
-* Renders derived state
-* Updates on broadcast events
+* Reads full DAG  
+* Renders derived state  
+* Updates on broadcast events  
 
 ---
 
 ## **8. Comparison to Existing Systems**
 
 | System Type         | Networking | Determinism | Local-First | DAG-Based |
-| ------------------- | ---------- | ----------- | ----------- | --------- |
-| Traditional Web App | Required   | No          | No          | No        |
-| CRDT Systems        | Optional   | Partial     | Yes         | Sometimes |
-| Blockchain          | Required   | Yes         | No          | Yes       |
-| **DLDSS**           | **None**   | **Yes**     | **Yes**     | **Yes**   |
+|--------------------|-----------|------------|------------|----------|
+| Traditional Web App | Required  | No         | No         | No       |
+| CRDT Systems        | Optional  | Partial    | Yes        | Sometimes|
+| Blockchain          | Required  | Yes        | No         | Yes      |
+| **DLDSS**           | **None**  | **Yes**    | **Yes**    | **Yes**  |
 
 ---
 
@@ -284,10 +296,10 @@ UI derived exclusively from deterministic event replay.
 
 ## **10. Limitations**
 
-* No cross-device synchronization (by design in MVP)
-* Event ordering relies on local timing (can be enhanced with logical clocks)
-* Storage constraints in localStorage
-* No conflict resolution beyond append order
+* No cross-device synchronization (by design in MVP)  
+* Event ordering relies on local timing (can be enhanced with logical clocks)  
+* Storage constraints in localStorage  
+* No conflict resolution beyond append order  
 
 ---
 
@@ -295,23 +307,23 @@ UI derived exclusively from deterministic event replay.
 
 ### **11.1 IndexedDB Backend**
 
-For large-scale DAG storage
+For large-scale DAG storage  
 
 ### **11.2 Cryptographic Event Signing**
 
-For verifiability and trust
+For verifiability and trust  
 
 ### **11.3 Causal Ordering (Vector Clocks)**
 
-To extend beyond linear append
+To extend beyond linear append  
 
 ### **11.4 P2P / IPFS Integration**
 
-For cross-device replication
+For cross-device replication  
 
 ### **11.5 Access Control Layers**
 
-Capability-based permissions
+Capability-based permissions  
 
 ---
 
@@ -323,9 +335,9 @@ DLDSS demonstrates that:
 
 By combining:
 
-* Append-only DAG structures
-* Local-first persistence
-* Broadcast-based synchronization
+* Append-only DAG structures  
+* Local-first persistence  
+* Broadcast-based synchronization  
 
 the system provides a minimal yet powerful foundation for building **fully deterministic, multi-context applications**.
 
@@ -335,19 +347,19 @@ the system provides a minimal yet powerful foundation for building **fully deter
 
 This document serves as a **public disclosure of system design and implementation approach**, establishing prior art for:
 
-* Deterministic DAG-based local state systems
-* BroadcastChannel-driven synchronization architectures
-* Serverless multi-context consensus models
+* Deterministic DAG-based local state systems  
+* BroadcastChannel-driven synchronization architectures  
+* Serverless multi-context consensus models  
 
 ---
 
-## 14. P2P Extension (v1.1 Update)
+## **14. P2P Extension (v1.1 Update)**
 
-### 14.1 Overview
+### **14.1 Overview**
 
 The Deterministic Local DAG State System (DLDSS) now supports **peer-to-peer synchronization across devices**, while retaining full backward compatibility with the existing DAG and intra-device BroadcastChannel mechanisms. This extension introduces a **fourth transport** alongside localStorage and BroadcastChannel, enabling cross-device state replication **without centralized servers**.
 
-### 14.2 Key Architectural Decisions
+### **14.2 Key Architectural Decisions**
 
 - **Single Unified Write Path:** `dispatchEvent()` now appends events to the DAG, persists to localStorage, broadcasts to other tabs, and sends to connected peers via P2P (`p2pBroadcast()`). One call ensures **deterministic propagation across all transports**.  
 - **Single Unified Read Path:** `receiveEvent()` handles all incoming events, whether from other tabs (BroadcastChannel) or remote peers (WebRTC DataChannel). Events are **deduplicated, appended, persisted, and relayed automatically**.  
@@ -356,15 +368,17 @@ The Deterministic Local DAG State System (DLDSS) now supports **peer-to-peer syn
 - **Event Origin Transparency:** Each message includes a small badge indicating its origin: local, BroadcastChannel (`bc`), or P2P. This aids debugging and auditing.  
 - **Deterministic Ordering:** After a full DAG sync from a peer, `dag.sort()` restores ordering by `[timestamp, authorId]` as defined in the original specification.
 
-### 14.3 Benefits
+### **14.3 Benefits**
 
 - Extends DLDSS from **single-device, multi-tab synchronization** to **multi-device peer collaboration**.  
 - Maintains **full determinism, conflict-free state, and reproducibility** across all peers.  
 - Fully **serverless and decentralized**, enabling offline-first applications.  
-- Supports **auditable, transparent event origins** for each cross-device message.
+- Supports **auditable, transparent event origins** for each cross-device message.  
 
-### 14.4 Implementation Notes
+### **14.4 Implementation Notes**
 
 - P2P layer is **additive**, leaving all existing code paths and DAG logic unchanged.  
 - Manual signaling ensures **no dependency on external servers**, protecting privacy and sovereignty.  
-- Can be integrated with **higher-level networking protocols or encrypted overlays** for future extensions (e.g., IPFS, FHE-secured replication).
+- Can be integrated with **higher-level networking protocols or encrypted overlays** for future extensions (e.g., IPFS, FHE-secured replication).  
+
+
