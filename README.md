@@ -381,4 +381,351 @@ The Deterministic Local DAG State System (DLDSS) now supports **peer-to-peer syn
 - Manual signaling ensures **no dependency on external servers**, protecting privacy and sovereignty.  
 - Can be integrated with **higher-level networking protocols or encrypted overlays** for future extensions (e.g., IPFS, FHE-secured replication).  
 
+## **15. Global Decentralized AI Extension (v2.0)**
+
+### *Integrating Local Deterministic State with Distributed AI Inference via Ollama*
+
+---
+
+## **15.1 Overview**
+
+The DLDSS architecture is extended to support **globally decentralized, accessible AI execution** by integrating **local-first model inference runtimes** such as **Ollama**.
+
+This evolution transforms DLDSS from a deterministic state system into a:
+
+> **Globally distributed, sovereign AI execution substrate**
+
+Key idea:
+
+> **AI is not a remote service — it is a local, deterministic capability synchronized through events.**
+
+---
+
+## **15.2 Design Philosophy**
+
+This extension preserves all original DLDSS guarantees:
+
+* Deterministic state
+* Append-only event DAG
+* Local-first execution
+* Serverless operation
+
+While adding:
+
+* Distributed AI inference
+* Cross-device knowledge propagation
+* Model-agnostic execution
+
+---
+
+## **15.3 Architectural Additions**
+
+### **15.3.1 AI Execution Node (Local)**
+
+Each client becomes an **AI-capable node** by running a local inference engine:
+
+* Ollama runtime (LLMs, embeddings, tools)
+* Optional WASM-based inference engines (future)
+
+Each node can:
+
+* Execute prompts
+* Generate outputs
+* Emit results as DAG events
+
+---
+
+### **15.3.2 AI Event Type**
+
+AI interactions are formalized as deterministic events:
+
+```json
+{
+  "type": "AI_INFERENCE",
+  "payload": {
+    "model": "llama3",
+    "prompt": "...",
+    "parameters": {
+      "temperature": 0.2,
+      "max_tokens": 512
+    },
+    "output": "...",
+    "hash": "sha256(...)"
+  },
+  "author": "node_id",
+  "timestamp": 1710000000000
+}
+````
+
+---
+
+### **15.3.3 Deterministic AI Constraint**
+
+To preserve determinism:
+
+* Models must be:
+
+  * Version-pinned
+  * Hash-verified
+* Inference parameters must be fixed
+* Output must be stored (not recomputed)
+
+> **AI outputs are treated as facts, not recomputed functions.**
+
+---
+
+### **15.3.4 AI as Event Producer**
+
+AI is not special infrastructure — it is:
+
+> **A deterministic event generator within the DAG**
+
+Flow:
+
+1. User submits prompt
+2. Local AI executes via Ollama
+3. Output is captured
+4. Event is appended to DAG
+5. Event propagates globally
+
+---
+
+## **15.4 Global Synchronization Layer**
+
+### **15.4.1 Transport Expansion**
+
+DLDSS now supports four synchronization layers:
+
+1. localStorage (persistence)
+2. BroadcastChannel (intra-device)
+3. WebRTC P2P (cross-device)
+4. Optional overlay networks (future)
+
+---
+
+### **15.4.2 Event Propagation Model**
+
+```
+Local Node → DAG Append → Broadcast → P2P → Global DAG Convergence
+```
+
+Each node:
+
+* Receives events
+* Verifies integrity
+* Appends if unseen
+* Replays state
+
+---
+
+### **15.4.3 Model Distribution (Optional Layer)**
+
+To ensure global reproducibility:
+
+* Models may be:
+
+  * Pre-installed locally
+  * Distributed via content-addressed systems (e.g., IPFS)
+* Referenced by:
+
+  * Hash
+  * Version tag
+
+---
+
+## **15.5 AI Determinism Model**
+
+### **15.5.1 Problem**
+
+AI inference is typically **non-deterministic** due to:
+
+* Floating point variance
+* Sampling randomness
+* Hardware differences
+
+---
+
+### **15.5.2 Solution**
+
+DLDSS enforces:
+
+#### **Option A — Output Canonicalization (Default)**
+
+* Store output directly in DAG
+* Treat as immutable fact
+* No recomputation required
+
+#### **Option B — Deterministic Replay (Advanced)**
+
+* Enforce:
+
+  * Seeded randomness
+  * Fixed runtime
+  * Identical model binary
+* Recompute when needed
+
+---
+
+### **15.5.3 Trust Model**
+
+Each AI event includes:
+
+* Output hash
+* Model identifier
+* Optional signature
+
+Enabling:
+
+* Verification
+* Auditability
+* Reproducibility
+
+---
+
+## **15.6 Node Roles**
+
+Each participant in the network is a **sovereign compute node**:
+
+| Role         | Capability                   |
+| ------------ | ---------------------------- |
+| Passive Node | Receives + replays DAG       |
+| Active Node  | Creates events               |
+| AI Node      | Executes AI inference        |
+| Relay Node   | Forwards events across peers |
+
+Nodes may combine roles dynamically.
+
+---
+
+## **15.7 Security + Integrity**
+
+### **15.7.1 Event Integrity**
+
+* Hash chaining (optional)
+* Signature verification (future)
+
+### **15.7.2 Model Integrity**
+
+* Model hash validation
+* Signed model manifests
+
+### **15.7.3 Execution Isolation**
+
+* AI runs locally
+* No external data leakage required
+
+---
+
+## **15.8 Benefits**
+
+### **15.8.1 Sovereign AI**
+
+* No API dependency
+* No centralized control
+* Full user ownership
+
+---
+
+### **15.8.2 Global Accessibility**
+
+* Works offline-first
+* Syncs when peers are available
+* No infrastructure requirement
+
+---
+
+### **15.8.3 Deterministic Knowledge Graph**
+
+AI outputs become:
+
+> **Permanent, verifiable nodes in a global event DAG**
+
+---
+
+### **15.8.4 Composability**
+
+AI outputs can:
+
+* Trigger further events
+* Feed into other models
+* Build layered intelligence systems
+
+---
+
+## **15.9 Example Flow**
+
+1. User enters prompt: `"Summarize document"`
+2. Local Ollama executes model
+3. Output generated
+4. Event created:
+
+```json
+{
+  "type": "AI_INFERENCE",
+  "payload": {
+    "model": "llama3@sha256:abc...",
+    "prompt": "Summarize document",
+    "output": "Summary text...",
+    "hash": "xyz..."
+  }
+}
+```
+
+5. Event appended to DAG
+6. Broadcast locally
+7. Synced via P2P
+8. Other nodes receive + display result
+
+---
+
+## **15.10 Future Extensions**
+
+### **15.10.1 Federated Model Swarms**
+
+Multiple nodes collaborate on inference tasks.
+
+### **15.10.2 Verifiable AI Pipelines**
+
+Chained AI operations with full provenance tracking.
+
+### **15.10.3 Encrypted Inference (FHE / MPC)**
+
+Privacy-preserving AI execution.
+
+### **15.10.4 Autonomous Agents**
+
+AI nodes that:
+
+* Generate events independently
+* React to DAG state changes
+
+---
+
+## **15.11 Conclusion**
+
+With the integration of local AI runtimes like Ollama, DLDSS evolves into:
+
+> **A globally distributed, deterministic, serverless AI system**
+
+Where:
+
+* Every device is a compute node
+* Every AI output is a verifiable event
+* Every user participates in a shared intelligence graph
+
+---
+
+## **15.12 Prior Art Extension**
+
+This section establishes prior art for:
+
+* Local-first AI execution integrated with deterministic DAG systems
+* Event-based AI output synchronization across decentralized networks
+* Serverless global AI coordination via append-only logs
+* Treating AI inference as immutable, replayable state transitions
+
+---
+
+```
+
 
